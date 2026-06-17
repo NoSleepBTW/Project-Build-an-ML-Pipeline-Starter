@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 """
-Download from W&B the raw dataset and apply some basic data cleaning, exporting the result to a new artifact
+Download the raw dataset from W&B and apply basic cleaning: drop price outliers,
+parse review dates, and remove listings outside the NYC geographic area. The cleaned
+result is uploaded back to W&B as a new artifact.
 """
 import argparse
 import logging
@@ -11,44 +13,45 @@ import pandas as pd
 logging.basicConfig(level=logging.INFO, format="%(asctime)-15s %(message)s")
 logger = logging.getLogger()
 
-# DO NOT MODIFY
 def go(args):
 
-    run = wandb.init(job_type="basic_cleaning")
+    run = wandb.init(project="nyc_airbnb", group="cleaning", job_type="basic_cleaning", save_code=True)
     run.config.update(args)
 
-    # Download input artifact. This will also log that this script is using this
-    
-    run = wandb.init(project="nyc_airbnb", group="cleaning", save_code=True)
+    # Download the raw data artifact from W&B and load it
+    logger.info("Downloading and reading artifact %s", args.input_artifact)
     artifact_local_path = run.use_artifact(args.input_artifact).file()
     df = pd.read_csv(artifact_local_path)
-    # Drop outliers
+    rows_in = len(df)
+
+    # Drop price outliers outside the configured [min_price, max_price] range
     min_price = args.min_price
     max_price = args.max_price
     idx = df['price'].between(min_price, max_price)
     df = df[idx].copy()
-    # Convert last_review to datetime
+
+    # Parse last_review into proper datetimes
     df['last_review'] = pd.to_datetime(df['last_review'])
 
-    # Drop rows outside the NYC geographic boundaries so test_proper_boundaries passes
+    # Drop rows outside the NYC bounding box. This guards against the out-of-area
+    # coordinates that appear in newer data samples (e.g. sample2.csv).
     idx = df['longitude'].between(-74.25, -73.50) & df['latitude'].between(40.5, 41.2)
     df = df[idx].copy()
+    logger.info("Cleaning removed %d of %d rows", rows_in - len(df), rows_in)
 
-    # Save the cleaned data
-    df.to_csv('clean_sample.csv',index=False)
+    # Write the cleaned data and upload it to W&B as a new versioned artifact
+    logger.info("Uploading cleaned artifact %s", args.output_artifact)
+    df.to_csv('clean_sample.csv', index=False)
 
-    # log the new data.
     artifact = wandb.Artifact(
-     args.output_artifact,
-     type=args.output_type,
-     description=args.output_description,
- )
+        args.output_artifact,
+        type=args.output_type,
+        description=args.output_description,
+    )
     artifact.add_file("clean_sample.csv")
     run.log_artifact(artifact)
 
 
-# TODO: In the code below, fill in the data type for each argument. The data type should be str, float or int. 
-# TODO: In the code below, fill in a description for each argument. The description should be a string.
 if __name__ == "__main__":
 
     parser = argparse.ArgumentParser(description="A very basic data cleaning")
