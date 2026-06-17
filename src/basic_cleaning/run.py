@@ -56,45 +56,45 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="A very basic data cleaning")
   
     parser.add_argument(
-        "--input_artifact", 
-        type = ## INSERT TYPE HERE: str, float or int,
-        help = ## INSERT DESCRIPTION HERE,
-        required = True
+        "--input_artifact",
+        type=str,
+        help="Name of the input W&B artifact (raw data) to be cleaned, e.g. 'sample.csv:latest'",
+        required=True
     )
 
     parser.add_argument(
-        "--output_artifact", 
-        type = ## INSERT TYPE HERE: str, float or int,
-        help = ## INSERT DESCRIPTION HERE,
-        required = True
+        "--output_artifact",
+        type=str,
+        help="Name for the cleaned output W&B artifact, e.g. 'clean_sample.csv'",
+        required=True
     )
 
     parser.add_argument(
-        "--output_type", 
-        type = ## INSERT TYPE HERE: str, float or int,
-        help = ## INSERT DESCRIPTION HERE,
-        required = True
+        "--output_type",
+        type=str,
+        help="Type/category to assign to the output artifact in W&B",
+        required=True
     )
 
     parser.add_argument(
-        "--output_description", 
-        type = ## INSERT TYPE HERE: str, float or int,
-        help = ## INSERT DESCRIPTION HERE,
-        required = True
+        "--output_description",
+        type=str,
+        help="A brief description of the output artifact",
+        required=True
     )
 
     parser.add_argument(
-        "--min_price", 
-        type = ## INSERT TYPE HERE: str, float or int,
-        help = ## INSERT DESCRIPTION HERE,
-        required = True
+        "--min_price",
+        type=float,
+        help="Minimum price; listings below this value are dropped as outliers",
+        required=True
     )
 
     parser.add_argument(
         "--max_price",
-        type = ## INSERT TYPE HERE: str, float or int,
-        help = ## INSERT DESCRIPTION HERE,
-        required = True
+        type=float,
+        help="Maximum price; listings above this value are dropped as outliers",
+        required=True
     )
 
 
