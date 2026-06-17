@@ -6,6 +6,27 @@ to be retrained with the same cadence, necessitating an end-to-end pipeline that
 
 In this project you will build such a pipeline.
 
+## Submission Links
+
+- **Weights & Biases project:** https://wandb.ai/coreymlehman-western-governors-university/nyc_airbnb
+- **GitHub repository:** https://github.com/NoSleepBTW/Project-Build-an-ML-Pipeline-Starter
+- **Releases:** [`V1.0.0`](https://github.com/NoSleepBTW/Project-Build-an-ML-Pipeline-Starter/releases/tag/V1.0.0) (initial pipeline) · [`V1.0.1`](https://github.com/NoSleepBTW/Project-Build-an-ML-Pipeline-Starter/releases/tag/V1.0.1) (adds NYC geographic-bounds filter)
+
+> Note: the W&B project lives under a Western Governors University organization entity whose
+> privacy policy restricts projects to "Team" visibility, so a fully public link is not available
+> from this account.
+
+## Results Summary
+
+End-to-end MLflow + Hydra + Weights & Biases pipeline that estimates short-term rental prices in NYC:
+
+`download → basic_cleaning → data_check → data_split → train_random_forest → test_regression_model`
+
+- **Production model (`random_forest_export:prod`)** — validation MAE **34.13** (R² 0.55); held-out
+  **test MAE 33.85** (R² 0.56), confirming the model generalizes without overfitting.
+- **Retrain on new data (`sample2.csv`, release `V1.0.1`)** — MAE **32.42** (R² 0.58).
+- Hyperparameters tuned with a Hydra multirun sweep over `max_depth` and `n_estimators`.
+
 ## Table of contents
 
 - [Preliminary steps](#preliminary-steps)
